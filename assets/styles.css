@@ -1,0 +1,76 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 400px;
+    margin: 50px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0 20px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+a {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: #4CAF50;
+    text-decoration: none;
+}
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+button, .btn {
+    display: inline-block;
+    padding: 10px 15px;
+    background: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}

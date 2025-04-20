@@ -1,0 +1,13 @@
+# Ignore XAMPP or system-specific files
+*.log
+*.env
+vendor/
+node_modules/
+.DS_Store
+
+# Ignore any IDE config files
+.vscode/
+.idea/
+
+# If you keep database exports
+*.sql
