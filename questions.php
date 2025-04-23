@@ -449,7 +449,7 @@ $questions = $questionObj->getAll();
                             </div>
                         </div>
                         <div class="comment-body">
-                            <?= nl2br(htmlspecialchars($c['body'])) ?>
+                            <?= nl2br(htmlspecialchars($c['content'])) ?>
                         </div>
                     </div>           
                     <?php               
