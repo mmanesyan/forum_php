@@ -546,7 +546,7 @@ $successMessage = isset($_GET['success']) ? $_GET['success'] : null;
 <body>
     <header>
         <div class="header-container">
-            <div class="logo">Հարցուպատասխան</div>
+            <div class="logo">Հարցեր և մեկնաբանություններ</div>
             <nav class="nav-links">
                 <a href="index.php">Գլխավոր</a>
                 <?php if ($isLoggedIn): ?>
