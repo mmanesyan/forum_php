@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $loggedInUser = $user->login($email, $password);
     if ($loggedInUser) {
         $_SESSION['user_id'] = $loggedInUser['id'];
-        header('Location: profile.php');
+        header('Location: dashboard.php');
         exit;
     } else {
         $error = "Սխալ մուտքագրված տվյալներ։";

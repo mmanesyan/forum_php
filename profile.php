@@ -15,18 +15,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'];
     $email = $_POST['email'];
     $avatar = $user['avatar'];
+    
+    // Process avatar upload
     if (!empty($_FILES['avatar']['name'])) {
         $avatar = time() . '_' . $_FILES['avatar']['name'];
         move_uploaded_file($_FILES['avatar']['tmp_name'], 'uploads/' . $avatar);
     }
-
-    $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, avatar = ? WHERE id = ?");
-    $success = $stmt->execute([$name, $email, $avatar, $_SESSION['user_id']]);
     
-    if ($success) {
+    // Check if password is being updated
+    if (!empty($_POST['password'])) {
+        // Validate matching passwords
+        if ($_POST['password'] !== $_POST['password_confirm']) {
+            $error = "Գաղտնաբառերը չեն համընկնում։";
+        } else {
+            $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+            $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, avatar = ?, password = ? WHERE id = ?");
+            $success = $stmt->execute([$name, $email, $avatar, $password, $_SESSION['user_id']]);
+        }
+    } else {
+        // No password update
+        $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, avatar = ? WHERE id = ?");
+        $success = $stmt->execute([$name, $email, $avatar, $_SESSION['user_id']]);
+    }
+    
+    if (isset($success) && $success) {
         $user = $userObj->getById($_SESSION['user_id']); 
         $message = "Տվյալները հաջողությամբ թարմացվեցին։";
-    } else {
+    } elseif (!isset($error)) {
         $error = "Email-ը հնարավոր է արդեն օգտագործվում է։";
     }
 }
@@ -191,8 +206,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: var(--gray-color);
         }
         
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: var(--gray-color);
+            font-size: 12px;
+            padding-left: 15px;
+        }
+        
         input[type="text"],
-        input[type="email"] {
+        input[type="email"],
+        input[type="password"] {
             width: 100%;
             padding: 15px 15px 15px 45px;
             border: 1px solid #dee2e6;
@@ -204,26 +228,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         input[type="text"]:focus,
-        input[type="email"]:focus {
+        input[type="email"]:focus,
+        input[type="password"]:focus {
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
         }
         
-    .file-upload {
-        position: relative;
-        display: inline-block;
-        width: 100%;
-        height: 50px;
-        border-radius: 10px;
-        background-color: #f8f9fa;
-        border: 1px dashed #dee2e6;
-        cursor: pointer;
-        text-align: center;
-        transition: all 0.3s ease;
-        margin: 0 0 20px;
-    }
-
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            height: 50px;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            border: 1px dashed #dee2e6;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            margin: 0 0 20px;
+        }
         
         .file-upload:hover {
             background-color: #e9ecef;
@@ -343,6 +367,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-right: 8px;
         }
         
+        /* Section divider */
+        .section-divider {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            color: var(--gray-color);
+        }
+        
+        .section-divider:before,
+        .section-divider:after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background-color: #dee2e6;
+        }
+        
+        .section-divider span {
+            padding: 0 10px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -433,6 +479,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </label>
             </div>
             
+            <div class="section-divider">
+                <span>Գաղտնաբառի թարմացում</span>
+            </div>
+            
+            <div class="form-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" name="password" placeholder="Նոր գաղտնաբառ">
+                <small>Թողեք դատարկ, եթե չեք ցանկանում փոխել գաղտնաբառը</small>
+            </div>
+            
+            <div class="form-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" name="password_confirm" placeholder="Հաստատեք նոր գաղտնաբառը">
+            </div>
+            
             <button type="submit">
                 <i class="fas fa-save"></i> Թարմացնել
             </button>
@@ -455,6 +516,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         document.addEventListener('DOMContentLoaded', function() {
             const fileInput = document.getElementById('avatar-upload');
             const fileName = document.querySelector('.file-name');
+            const form = document.querySelector('form');
+            const passwordInput = document.querySelector('input[name="password"]');
+            const confirmInput = document.querySelector('input[name="password_confirm"]');
+            
+            // Form validation
+            form.addEventListener('submit', function(e) {
+                // Check if password fields have values and if they match
+                if (passwordInput.value && passwordInput.value !== confirmInput.value) {
+                    e.preventDefault();
+                    alert('Գաղտնաբառերը չեն համընկնում։');
+                    confirmInput.focus();
+                }
+            });
             
             fileInput.addEventListener('change', function() {
                 if (this.files && this.files[0]) {
