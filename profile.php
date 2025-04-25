@@ -16,15 +16,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $avatar = $user['avatar'];
     
-    // Process avatar upload
     if (!empty($_FILES['avatar']['name'])) {
         $avatar = time() . '_' . $_FILES['avatar']['name'];
         move_uploaded_file($_FILES['avatar']['tmp_name'], 'uploads/' . $avatar);
     }
     
-    // Check if password is being updated
     if (!empty($_POST['password'])) {
-        // Validate matching passwords
         if ($_POST['password'] !== $_POST['password_confirm']) {
             $error = "Գաղտնաբառերը չեն համընկնում։";
         } else {
@@ -33,7 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $success = $stmt->execute([$name, $email, $avatar, $password, $_SESSION['user_id']]);
         }
     } else {
-        // No password update
         $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, avatar = ? WHERE id = ?");
         $success = $stmt->execute([$name, $email, $avatar, $_SESSION['user_id']]);
     }
@@ -367,7 +363,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-right: 8px;
         }
         
-        /* Section divider */
         .section-divider {
             display: flex;
             align-items: center;
@@ -520,9 +515,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             const passwordInput = document.querySelector('input[name="password"]');
             const confirmInput = document.querySelector('input[name="password_confirm"]');
             
-            // Form validation
             form.addEventListener('submit', function(e) {
-                // Check if password fields have values and if they match
                 if (passwordInput.value && passwordInput.value !== confirmInput.value) {
                     e.preventDefault();
                     alert('Գաղտնաբառերը չեն համընկնում։');
